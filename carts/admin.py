@@ -12,7 +12,7 @@ class CartItemInline(admin.TabularInline):
 class CartAdmin(admin.ModelAdmin):
     list_display = ['user', 'created_at']  # Display user and created_at in the cart list
     inlines = [CartItemInline]  # Show related CartItems inline within the Cart view
-    search_fields = ['user__username']  # Allow search by user's username
+    search_fields = ['user__email']  # Allow search by user's username
     list_filter = ['created_at']  # Filter by creation date
 
     def get_queryset(self, request):
@@ -26,5 +26,5 @@ class CartAdmin(admin.ModelAdmin):
 @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):
     list_display = ['cart', 'product', 'size', 'quantity']  # Display cart, product, size, and quantity in the list view
-    search_fields = ['cart__user__username', 'product__name']  # Allow search by cart's user or product name
+    search_fields = ['cart__user__email', 'product__name']  # Allow search by cart's user or product name
     list_filter = ['cart__user', 'product']  # Filter by cart's user and product

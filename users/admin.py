@@ -3,9 +3,9 @@ from .models import Address
 
 @admin.register(Address)
 class AddressAdmin(admin.ModelAdmin):
-    list_display = ['user', 'address_name', 'street_name', 'city', 'is_default', 'recepient_name', 'phone_number']
+    list_display = ['user', 'address_name', 'street_name', 'city', 'is_default', 'recipient_name', 'phone_number']
     list_filter = ['city', 'is_default']
-    search_fields = ['user__username', 'address_name', 'street_name', 'recepient_name', 'phone_number']
+    search_fields = ['user__email', 'address_name', 'street_name', 'recepient_name', 'phone_number']
     # autocomplete_fields = ['user']  # Use autocomplete for user field to optimize query loading
     # readonly_fields = ['user']  # Make the user field read-only if you don't want it to be modified in admin
 

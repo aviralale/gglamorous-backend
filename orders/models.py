@@ -8,8 +8,8 @@ User = get_user_model()
 class Order(models.Model):
     PAYMENT_METHOD_CHOICES = [
         ('COD', 'Cash on Delivery'),
-        ('Khalti', 'Khalti'),
-        ('eSewa', 'eSewa'),
+        # ('Khalti', 'Khalti'),
+        # ('eSewa', 'eSewa'),
     ]
     PAYMENT_STATUS_CHOICES = [
         ('Pending', 'Pending'),
@@ -22,7 +22,7 @@ class Order(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, default='COD')
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending')
-    transaction_id = models.CharField(max_length=100, blank=True, null=True)  # Store transaction ID for eSewa or Khalti
+    # transaction_id = models.CharField(max_length=100, blank=True, null=True)  # Store transaction ID for eSewa or Khalti
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50, choices=[('Pending', 'Pending'), ('Shipped', 'Shipped'), ('Delivered', 'Delivered')], default='Pending')
 

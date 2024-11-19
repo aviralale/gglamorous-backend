@@ -9,7 +9,7 @@ class WishlistItemInline(admin.TabularInline):
 
 class WishlistAdmin(admin.ModelAdmin):
     list_display = ('user', 'get_products_with_sizes', 'created_at')
-    search_fields = ('user__username',)
+    search_fields = ('user__email',)
     list_filter = ('created_at',)
     inlines = [WishlistItemInline]  # Add inline to view/edit wishlist items in the same view
 

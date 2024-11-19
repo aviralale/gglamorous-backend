@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -21,10 +22,9 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
     description = models.TextField()
-    fabric_and_care = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    stock = models.IntegerField()
-    sizes = models.JSONField()  # Store sizes like {"S": 5, "M": 10, "L": 15}
+    stock = models.IntegerField(default=0)
+    sizes = models.JSONField(default=dict)
     is_sale = models.BooleanField(default=False)
     sale_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     slug = models.SlugField(unique=True, blank=True)
@@ -35,6 +35,44 @@ class Product(models.Model):
         if not self.slug:  # Only set slug if not already set.
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
+
+    @property
+    def available(self):
+        """
+        Check if the product is available for purchase:
+        - Must have stock > 0
+        - Must have at least one size with stock
+        """
+        if self.stock <= 0:
+            return False
+            
+        # Check if any size has stock
+        return any(quantity > 0 for quantity in self.sizes.values())
+        
+    @property
+    def current_price(self):
+        """Return the sale price if on sale, otherwise regular price"""
+        if self.is_sale and self.sale_price:
+            return self.sale_price
+        return self.price
+
+    # Optional: Add a method to check stock for specific size
+    def available_in_size(self, size):
+        """Check if product is available in specific size"""
+        return size in self.sizes and self.sizes[size] > 0
+
+    # Optional: Add a method to update stock for a specific size
+    def update_size_stock(self, size, quantity):
+        """Update stock for a specific size"""
+        if size in self.sizes:
+            self.sizes[size] = max(0, quantity)  # Prevent negative stock
+            self.stock = sum(self.sizes.values())  # Update total stock
+            self.save()
+
+    @property
+    def is_new(self):
+        """Check if product is new (created within the last 21 days)"""
+        return (timezone.now() - self.created_at).days <= 21
 
 
     def __str__(self):
